@@ -95,7 +95,7 @@ def robinson_monro(epsilon="dynamic",
         alphas.append(alpha)
         # print("alpha", alpha)
 
-    figname = f"_epsillon_{epsillon_type}-polyakWindow_{polyak_average_window}" \
+    figname = f"_epsilon_{epsillon_type}-polyakWindow_{polyak_average_window}" \
               f"-nEpisode_{nb_episodes}_durationEp_{episode_duration}-c_{c}" \
               f"-discount_{discount}-alpha0_{alpha0}"
     plot_policies(policies, figname=figname)

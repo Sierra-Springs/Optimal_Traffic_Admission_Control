@@ -22,4 +22,4 @@ Plus epsilon est grand, plus il y a de fluactuation / perturbation / oscillation
 Use the version developed for the decreasing stepsizes in combination with Polyak averages;
 show what happens with different window sizes. I leave to you how to choose the window for averaging.
 
-Plus la fenêtre de polyak est grande, plus la convergence est lente
+Plus la fenêtre de Polyak est grande, plus la convergence est lente
