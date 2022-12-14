@@ -161,14 +161,6 @@ if __name__ == '__main__':
                           "c": [0, capacity, 0.6, 1],
                           "alpha0": [2.5, 0]}
 
-    grid_search_params = {"epsilon": [0.5],
-                          "polyak_average_window": [1],
-                          "nb_episodes": [1000],
-                          "episode_duration": [1],
-                          "discount": [1 / 2, 3 / 4, 1],
-                          "c": [0, capacity, 0.6, 1],
-                          "alpha0": [0]}
-
     params = makeGrid(grid_search_params)
     for param in params:
         pprint(robinson_monro(**param))
