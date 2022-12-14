@@ -89,7 +89,7 @@ def robinson_monro(epsilon="dynamic",
 
         # iterate
         if epsillon_type == "dynamic":
-            epsilon = c / (num_episode ** discount)
+            epsilon = (c / (num_episode ** discount)) + 1e-20
         alpha_mean = np.mean(alphas[-polyak_average_window:])
         alpha = max(0, min(alpha_mean + epsilon * (c - Y), n_classes))
         alphas.append(alpha)
@@ -116,8 +116,8 @@ def plot_policies(policies, figname):
         for i in range(n_classes):
             plt.plot(policies[i, :int((window / 100) * policies.shape[1])], label=f"class {i}")
         plt.legend()
-        plt.savefig(figpath / f"wind_{str(window).rjust(3, '0')}%.png")
-        plt.title(figname)
+        plt.title('\n'.join(figname[i:i+50] for i in range(0, len(figname), 50)))
+        plt.savefig(figpath / f"window{str(window).rjust(3, '0')}%__{figname}__.png")
         plt.close()
     make_gif(figpath, figname)
 
@@ -151,34 +151,25 @@ def fct(epsilon="dynamic",
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # pprint(fractional_knapsack_problem())
-    decreasing_stepsize_params = {"epsilon": ["dynamic"],
-                          "polyak_average_window": [1],
+    pprint(fractional_knapsack_problem())
+
+    grid_search_params = {"epsilon": ["dynamic", 0.2, 0.5, 1, 2, 10],
+                          "polyak_average_window": [1, 10, 100],
                           "nb_episodes": [1000],
                           "episode_duration": [1],
                           "discount": [1 / 2, 3 / 4, 1],
                           "c": [0, capacity, 0.6, 1],
                           "alpha0": [2.5, 0]}
 
-    """DSParams = makeGrid(decreasing_stepsize_params)
-    for param in DSParams:
-        pprint(robinson_monro(**param))
-
-    input("DS finished")"""
-
-    grid_search_params = {"epsilon": ["dynamic", 0.2, 2],
-                          "polyak_average_window": [1, 10, 100],
+    grid_search_params = {"epsilon": [0.5],
+                          "polyak_average_window": [1],
                           "nb_episodes": [1000],
                           "episode_duration": [1],
-                          "discount": [1 / 2],
-                          "c": [capacity],
-                          "alpha0": [2.5, 0]}
+                          "discount": [1 / 2, 3 / 4, 1],
+                          "c": [0, capacity, 0.6, 1],
+                          "alpha0": [0]}
 
     params = makeGrid(grid_search_params)
     for param in params:
         pprint(robinson_monro(**param))
 
-    # pprint(robinson_monro(polyak_average_window=1, epsilon=0.5, nb_episodes=100))
-    # make_gif(Path("/Users/nathanael.l/SynchroDir/Etudes/Cours et TP/M2 Informatique CMI (2021-2022)/Reenforcement Learning/TP1_optimal_traffic_admission_control/plot/plot_nEpisode_1000-c_0.34-discount_0.5-alpha0_1.2991978188022562"))
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
