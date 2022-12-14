@@ -152,6 +152,18 @@ def fct(epsilon="dynamic",
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # pprint(fractional_knapsack_problem())
+    decreasing_stepsize_params = {"epsilon": ["dynamic"],
+                          "polyak_average_window": [1],
+                          "nb_episodes": [1000],
+                          "episode_duration": [1],
+                          "discount": [1 / 2, 3 / 4, 1],
+                          "c": [0, capacity, 0.6, 1],
+                          "alpha0": [2.5, 0]}
+
+    DSParams = makeGrid(decreasing_stepsize_params)
+    for param in DSParams:
+        pprint(robinson_monro(**param))
+
     grid_search_params = {"epsilon": ["dynamic", 0.5, 1],
                           "polyak_average_window": [1, 10, 100],
                           "nb_episodes": [1000],
