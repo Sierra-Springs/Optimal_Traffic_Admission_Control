@@ -9,7 +9,7 @@ from pathlib import Path
 import glob
 from PIL import Image
 
-with open("src/parameters.json") as json_parameters:
+with open("parameters.json") as json_parameters:
     parameters = json.load(json_parameters)
 
 packet_rate = parameters['packet_rate']  # lambda (paquets par seconde)
@@ -95,17 +95,18 @@ def robinson_monro(epsilon="dynamic",
         alphas.append(alpha)
         # print("alpha", alpha)
 
-    figpath = Path("plot") / f"plot__epsillon_{epsillon_type}-polyakWindow_{polyak_average_window}" \
-                             f"-nEpisode_{nb_episodes}_durationEp_{episode_duration}-c_{c}" \
-                             f"-discount_{discount}-alpha0_{alpha0}" / "figs"
-    plot_policies(policies, figpath=figpath)
+    figname = f"_epsillon_{epsillon_type}-polyakWindow_{polyak_average_window}" \
+              f"-nEpisode_{nb_episodes}_durationEp_{episode_duration}-c_{c}" \
+              f"-discount_{discount}-alpha0_{alpha0}"
+    plot_policies(policies, figname=figname)
 
     estimated_reward = sum([_p * _policy * r for _p, _policy, r in zip(p, policy, reward)]) * packet_rate
     return {"policy_per_class": policy,
             "estimated_reward": estimated_reward}
 
 
-def plot_policies(policies, figpath):
+def plot_policies(policies, figname):
+    figpath = Path("plot") / f"plot_{figname}" / "figs"
     policies = np.array(policies).T
 
     os.makedirs(figpath, exist_ok=True)
@@ -116,16 +117,18 @@ def plot_policies(policies, figpath):
             plt.plot(policies[i, :int((window / 100) * policies.shape[1])], label=f"class {i}")
         plt.legend()
         plt.savefig(figpath / f"wind_{str(window).rjust(3, '0')}%.png")
+        plt.title(figname)
         plt.close()
-    make_gif(figpath)
+    make_gif(figpath, figname)
 
 
-def make_gif(figpath):
+def make_gif(figpath, figname):
     images = glob.glob(str(figpath / "*.png"))
     images.sort()
     frames = [Image.open(image) for image in images]
     frame_one = frames[0]
-    frame_one.save(figpath.parent / "res.gif", format="GIF", append_images=frames,
+    os.makedirs(figpath.parent.parent.parent / "gifs", exist_ok=True)
+    frame_one.save(figpath.parent.parent.parent / "gifs" / f"gif_{figname}.gif", format="GIF", append_images=frames,
                    save_all=True, duration=50, loop=0)
 
 
@@ -150,7 +153,7 @@ def fct(epsilon="dynamic",
 if __name__ == '__main__':
     # pprint(fractional_knapsack_problem())
     grid_search_params = {"epsilon": ["dynamic", 0.5, 1],
-                          "polyak_average_window": [1, 5, 10],
+                          "polyak_average_window": [1, 10, 100],
                           "nb_episodes": [1000],
                           "episode_duration": [1],
                           "discount": [1 / 2],
